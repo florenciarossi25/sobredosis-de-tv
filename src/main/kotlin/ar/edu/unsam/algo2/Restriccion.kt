@@ -3,41 +3,41 @@ package ar.edu.unsam.algo2.ar.edu.unsam.algo2
 import ar.edu.unsam.algo2.Programa
 
 abstract class Restriccion {
-    abstract fun programaCumple(programa: Programa): Boolean
+    val acciones = mutableListOf<Accion>()
+    abstract fun seCumple(programa: Programa): Boolean
+    fun ejecutarAcciones(programa: Programa) {
+        acciones.forEach{accion  -> accion.ejecurar(programa) }
+    }
+
 }
 
 class PromedioRating(val valor: Int) : Restriccion() {
+    override fun seCumple(programa: Programa) = programa.promedioRaitin() > valor
 
-    override fun programaCumple(programa: Programa) = promedio(programa.ultimosCincoRaitin()) > valor
-
-    private fun promedio(ultimosCincoRaitin: MutableList<Int>) = ultimosCincoRaitin.sum() / ultimosCincoRaitin.size
 }
 
 class MaximoConductores(val valor: Int) : Restriccion() {
-    override fun programaCumple(programa: Programa) = programa.conductores.size <= valor
+    override fun seCumple(programa: Programa) = programa.conductores.size <= valor
 }
 
 class ConConductor(val conductor: String) : Restriccion() {
-    override fun programaCumple(programa: Programa) = programa.conductores.contains(conductor)
+    override fun seCumple(programa: Programa) = programa.conducidoPor(conductor)
 }
 
 class PresupuestoLimite(val valor: Int) : Restriccion() {
-    override fun programaCumple(programa: Programa) = programa.presupuesto <= valor
+    override fun seCumple(programa: Programa) = programa.presupuesto <= valor
 }
 
-abstract class RestriccionCompuesta(val restriccion1: Restriccion, val restriccion2: Restriccion) : Restriccion() {
-}
-
-class RestriccionCompuestaOR(restriccion1: Restriccion, restriccion2: Restriccion) :
-    RestriccionCompuesta(restriccion1, restriccion2) {
-    override fun programaCumple(programa: Programa): Boolean {
-        return restriccion1.programaCumple(programa) || restriccion2.programaCumple(programa)
+class RestriccionCompuestaOR(val restricciones:List<Restriccion>) :
+    Restriccion() {
+    override fun seCumple(programa: Programa): Boolean {
+        return restricciones.any{ it.seCumple(programa)}
     }
 }
 
-class RestriccionCompuestaAND(restriccion1: Restriccion, restriccion2: Restriccion) :
-    RestriccionCompuesta(restriccion1, restriccion2) {
-    override fun programaCumple(programa: Programa): Boolean {
-        return restriccion1.programaCumple(programa) && restriccion2.programaCumple(programa)
+class RestriccionCompuestaAND(val restricciones:List<Restriccion>) :
+    Restriccion() {
+    override fun seCumple(programa: Programa): Boolean {
+        return restricciones.all{ it.seCumple(programa)}
     }
 }

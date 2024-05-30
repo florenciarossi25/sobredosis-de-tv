@@ -1,6 +1,6 @@
 package ar.edu.unsam.algo2.ar.edu.unsam.algo2
 
-import ar.edu.unsam.algo2.Encargado
+import ar.edu.unsam.algo2.Grilla
 import ar.edu.unsam.algo2.Programa
 import ar.edu.unsam.algo2.ar.edu.unsam.algo2.ar.edu.unsam.algo2.Mail
 import ar.edu.unsam.algo2.ar.edu.unsam.algo2.ar.edu.unsam.algo2.MailSender
@@ -8,11 +8,11 @@ import ar.edu.unsam.algo2.ar.edu.unsam.algo2.ar.edu.unsam.algo2.Text
 import ar.edu.unsam.algo2.ar.edu.unsam.algo2.ar.edu.unsam.algo2.TextSender
 
 abstract class Observer {
-    abstract fun notify(encargado: Encargado, programa: Programa)
+    abstract fun notify(encargado: Grilla, programa: Programa)
 }
 
 class NotificarConductores(val mailSender: MailSender) : Observer() {
-    override fun notify(encargado: Encargado, programa: Programa) {
+    override fun notify(encargado: Grilla, programa: Programa) {
         mailSender.send(
             Mail(
                 para = programa.conductores,
@@ -25,7 +25,7 @@ class NotificarConductores(val mailSender: MailSender) : Observer() {
 }
 
 class NotificarAgencia(val textSender: TextSender) : Observer() {
-    override fun notify(encargado: Encargado, programa: Programa) {
+    override fun notify(encargado: Grilla, programa: Programa) {
         if (programa.presupuesto > 100000) {
             textSender.send(
                 Text(
@@ -39,8 +39,8 @@ class NotificarAgencia(val textSender: TextSender) : Observer() {
 }
 
 class LimpiarRevision() : Observer() {
-    override fun notify(encargado: Encargado, programa: Programa) {
-        encargado.programasArevision.removeAll { !encargado.grilla.contains(it) }
+    override fun notify(encargado: Grilla, programa: Programa) {
+        encargado.programasArevision.removeAll { !encargado.programas.contains(it) }
     }
 
 }

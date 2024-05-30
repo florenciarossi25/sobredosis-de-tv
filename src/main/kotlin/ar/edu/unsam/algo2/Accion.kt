@@ -11,13 +11,14 @@ abstract class Accion {
     }
 
     abstract fun programaModificado(grilla: MutableList<Programa>, programa: Programa): List<Programa>
+    abstract fun ejecurar(programa: Programa)
 }
 
 class DivisorDePrograma() : Accion() {
     override fun programaModificado(grilla: MutableList<Programa>, programa: Programa): List<Programa> {
         val programa1 = Programa(
             titulo = "${titulo(programa, 0)} en el aire!",
-            conductores = conductores(programa, 0, (programa.conductores.size + 1) / 2),
+            conductores = programa.mitadPresentadores(),
             presupuesto = programa.presupuesto / 2,
             sponsors = programa.sponsors,
             dia = programa.dia,
@@ -26,7 +27,7 @@ class DivisorDePrograma() : Accion() {
         )
         val programa2 = Programa(
             titulo = titulo(programa, 1),
-            conductores = conductores(programa, (programa.conductores.size + 1) / 2, programa.conductores.size),
+            conductores = programa.mitadPresentadores().minus(programa1.conductores).toMutableList(),
             presupuesto = programa.presupuesto / 2,
             sponsors = programa.sponsors,
             dia = programa.dia,
